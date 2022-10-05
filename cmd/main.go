@@ -1,20 +1,29 @@
 package main
 
 import (
-	"diploma/internal/repository/incident"
-	"encoding/json"
-	"fmt"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 )
 
+func pusto()
+func HandleConnection(w http.ResponseWriter, r *http.Request) {
+	//vars := mux.Vars(r)
+	w.WriteHeader(http.StatusOK)
+	_, err := w.Write([]byte("ok"))
+	if err != nil {
+		log.Println(err)
+	}
+}
+
 func main() {
-
-	http.Serve()
-
 	r := mux.NewRouter()
-	
+	r.HandleFunc("/", HandleConnection)
+
+	err := http.ListenAndServe(":8282", r)
+	if err != nil {
+		log.Println(err)
+	}
 	//for _, s := range sms.ParseData("simulator/sms.data") {
 	//	fmt.Println(s)
 	//}
@@ -38,10 +47,10 @@ func main() {
 	//	log.Println(err)
 	//}
 	//fmt.Println(string(a))
-	ans := incident.ParseData("http://localhost:8383/accendent")
-	a, err := json.Marshal(ans)
-	if err != nil {
-		log.Println(err)
-	}
-	fmt.Println(string(a))
+	//ans := incident.ParseData("http://localhost:8383/accendent")
+	//a, err := json.Marshal(ans)
+	//if err != nil {
+	//	log.Println(err)
+	//}
+	//fmt.Println(string(a))
 }
