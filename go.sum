@@ -1,2 +1,4 @@
+github.com/IftekherSunny/go_country v0.0.0-20171031050552-fa1977b19cd2 h1:NrVJ6IvNAKInzIegd58ejesi3IpIEdY8VesUxhVhfjA=
+github.com/IftekherSunny/go_country v0.0.0-20171031050552-fa1977b19cd2/go.mod h1:mabp2fNVrqpq9H+oYpW29ZsyP2dCYmxyhHeFuvchppg=
 github.com/gorilla/mux v1.8.0 h1:i40aqfkR1h2SlN9hojwV5ZA91wcXFOvkdNIeFDP5koI=
 github.com/gorilla/mux v1.8.0/go.mod h1:DVbg23sWSpFRCP0SfiEN6jmj59UnW/n46BH5rLB71So=
