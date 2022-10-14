@@ -35,9 +35,10 @@ func ParseData(add string) []domain.MMSData {
 		return []domain.MMSData{}
 	}
 
+	countries := helper.NewCountries("data/countries.json")
 	answerMMSData := make([]domain.MMSData, 0, len(mmsData))
 	for _, data := range mmsData {
-		if helper.CheckProvider(data.Provider) && helper.CheckCountry(data.Country) {
+		if helper.CheckProvider(data.Provider) && countries.CheckCountry(data.Country) {
 			answerMMSData = append(answerMMSData, data)
 		}
 	}

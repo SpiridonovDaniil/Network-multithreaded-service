@@ -1,19 +1,26 @@
 package main
 
 import (
+	"diploma/internal/repository"
+	"encoding/json"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 )
 
-func pusto()
 func HandleConnection(w http.ResponseWriter, r *http.Request) {
-	//vars := mux.Vars(r)
-	w.WriteHeader(http.StatusOK)
-	_, err := w.Write([]byte("ok"))
+
+	resultt, err := json.Marshal(repository.Resultt())
 	if err != nil {
 		log.Println(err)
 	}
+
+	w.WriteHeader(http.StatusOK)
+	_, err = w.Write(resultt)
+	if err != nil {
+		log.Println(err)
+	}
+
 }
 
 func main() {
@@ -24,6 +31,7 @@ func main() {
 	if err != nil {
 		log.Println(err)
 	}
+
 	//for _, s := range sms.ParseData("simulator/sms.data") {
 	//	fmt.Println(s)
 	//}
@@ -47,10 +55,10 @@ func main() {
 	//	log.Println(err)
 	//}
 	//fmt.Println(string(a))
-	//ans := incident.ParseData("http://localhost:8383/accendent")
-	//a, err := json.Marshal(ans)
+	//z := incident.ParseData("http://localhost:8383/accendent")
+	//ap, err := json.Marshal(z)
 	//if err != nil {
 	//	log.Println(err)
 	//}
-	//fmt.Println(string(a))
+	//fmt.Println(string(ap))
 }

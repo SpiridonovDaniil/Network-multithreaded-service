@@ -15,7 +15,7 @@ func ParseData(add string) []domain.IncidentData {
 		log.Println(err)
 		return []domain.IncidentData{}
 	}
-	fmt.Println(data.Body)
+
 	if data.StatusCode != 200 {
 		fmt.Println(data.StatusCode)
 		return []domain.IncidentData{}

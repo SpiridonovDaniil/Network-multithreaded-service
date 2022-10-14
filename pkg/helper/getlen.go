@@ -2,9 +2,10 @@ package helper
 
 import "diploma/internal/domain"
 
-func getLen(mas []domain.EmailData) int {
+func GetLen(mas []domain.EmailData) int {
 	if len(mas) < 3 {
-		
+		return len(mas)
+	} else {
+		return 3
 	}
-
 }

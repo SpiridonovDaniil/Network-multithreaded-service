@@ -24,7 +24,7 @@ func ParseData(path string) []domain.VoiceCallData {
 
 	r.Comma = ';'
 	r.FieldsPerRecord = -1
-
+	countries := helper.NewCountries("data/countries.json")
 	answer := make([]domain.VoiceCallData, 0)
 	for voiceCallData, errRead := r.Read(); !errors.Is(errRead, io.EOF); voiceCallData, errRead = r.Read() {
 		if errRead != nil {
@@ -32,7 +32,7 @@ func ParseData(path string) []domain.VoiceCallData {
 			continue
 		}
 
-		if len(voiceCallData) < 8 || !helper.CheckCountry(voiceCallData[0]) || !helper.CheckVoiceCallProvider(voiceCallData[3]) {
+		if len(voiceCallData) < 8 || !countries.CheckCountry(voiceCallData[0]) || !helper.CheckVoiceCallProvider(voiceCallData[3]) {
 			continue
 		}
 

@@ -26,12 +26,13 @@ func ParseData(path string) []domain.SMSData {
 	r.FieldsPerRecord = -1
 
 	answer := make([]domain.SMSData, 0)
+	countries := helper.NewCountries("data/countries.json")
 	for smsData, errRead := r.Read(); !errors.Is(errRead, io.EOF); smsData, errRead = r.Read() {
 		if errRead != nil {
 			continue
 		}
 
-		if len(smsData) < 4 || !helper.CheckCountry(smsData[0]) || !helper.CheckProvider(smsData[3]) {
+		if len(smsData) < 4 || !countries.CheckCountry(smsData[0]) || !helper.CheckProvider(smsData[3]) {
 			continue
 		}
 

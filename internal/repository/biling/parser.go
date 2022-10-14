@@ -18,14 +18,18 @@ const (
 	maskCheckoutPage
 )
 
-func ParseData(path string) domain.BillingData {
+func ParseData(path string) *domain.BillingData {
 	r, err := os.Open(path)
 	if err != nil {
 		log.Println(err)
+
+		return nil
 	}
 	reader, err := io.ReadAll(r)
 	if err != nil {
 		log.Println(err)
+
+		return nil
 	}
 	var num float64
 	RightByte := 0
@@ -37,7 +41,7 @@ func ParseData(path string) domain.BillingData {
 	}
 	n := uint8(num)
 	fmt.Println(n)
-	return domain.BillingData{
+	return &domain.BillingData{
 		CreateCustomer: n&(1<<maskCreateCustomer) > 0,
 		Purchase:       n&(1<<maskPurchase) > 0,
 		Payout:         n&(1<<maskPayout) > 0,
