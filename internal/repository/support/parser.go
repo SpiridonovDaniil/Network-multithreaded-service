@@ -1,12 +1,13 @@
 package support
 
 import (
-	"diploma/internal/domain"
 	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
+
+	"diploma/internal/domain"
 )
 
 func ParseData(add string) []domain.SupportData {

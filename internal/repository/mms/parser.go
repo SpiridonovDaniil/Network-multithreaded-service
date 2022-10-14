@@ -1,13 +1,14 @@
 package mms
 
 import (
-	"diploma/internal/domain"
-	"diploma/pkg/helper"
 	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
+
+	"diploma/internal/domain"
+	"diploma/pkg/helper"
 )
 
 func ParseData(add string) []domain.MMSData {

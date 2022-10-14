@@ -1,6 +1,9 @@
-package getresultdata
+package service
 
 import (
+	"sort"
+	"sync"
+
 	"diploma/internal/domain"
 	"diploma/internal/repository/biling"
 	"diploma/internal/repository/email"
@@ -10,14 +13,71 @@ import (
 	"diploma/internal/repository/support"
 	"diploma/internal/repository/voicecall"
 	"diploma/pkg/helper"
-	"sort"
 )
 
-func GetResultData() domain.ResultSetT {
+type Service struct {
+	pathSms         string
+	mmsAddress      string
+	pathVoiceCall   string
+	pathEmail       string
+	pathBilling     string
+	supportAddress  string
+	incidentAddress string
+}
+
+func New(pathSms, mmsAddress, pathVoiceCall, pathEmail, pathBilling, supportAddress, incidentAddress string) *Service {
+	return &Service{
+		pathSms:         pathSms,
+		mmsAddress:      mmsAddress,
+		pathVoiceCall:   pathVoiceCall,
+		pathEmail:       pathEmail,
+		pathBilling:     pathBilling,
+		supportAddress:  supportAddress,
+		incidentAddress: incidentAddress,
+	}
+}
+
+func (s *Service) GetResultData() domain.ResultSetT {
 	var resultData domain.ResultSetT
-	dataSms := sms.ParseData("simulator/sms.data")
-	sortCountrySmsData := dataSms
 	countries := helper.NewCountries("data/countries.json")
+	var wg sync.WaitGroup
+	wg.Add(7)
+	go func() {
+		resultData.SMS = processSms(s.pathSms, countries)
+		wg.Done()
+	}()
+	go func() {
+		resultData.MMS = processMms(s.mmsAddress, countries)
+		wg.Done()
+	}()
+	go func() {
+		resultData.VoiceCall = processVoiceCall(s.pathVoiceCall)
+		wg.Done()
+	}()
+	go func() {
+		resultData.Email = processEmail(s.pathEmail)
+		wg.Done()
+	}()
+	go func() {
+		resultData.Billing = processBilling(s.pathBilling)
+		wg.Done()
+	}()
+	go func() {
+		resultData.Support = processSupport(s.supportAddress)
+		wg.Done()
+	}()
+	go func() {
+		resultData.Incidents = processIncident(s.incidentAddress)
+		wg.Done()
+	}()
+	wg.Wait()
+
+	return resultData
+}
+
+func processSms(path string, countries *helper.Countries) [][]domain.SMSData {
+	dataSms := sms.ParseData(path)
+	sortCountrySmsData := dataSms
 	for i := range sortCountrySmsData {
 		sortCountrySmsData[i].Country = countries.MostGetCountryName(sortCountrySmsData[i].Country)
 	}
@@ -29,9 +89,11 @@ func GetResultData() domain.ResultSetT {
 	sort.SliceStable(sortProviderSmsData, func(i, j int) bool { return sortProviderSmsData[i].Provider < sortProviderSmsData[j].Provider })
 	resultSmsData := make([][]domain.SMSData, 0)
 	resultSmsData = append(resultSmsData, sortProviderSmsData, sortCountrySmsData)
-	resultData.SMS = resultSmsData
+	return resultSmsData
+}
 
-	dataMms := mms.ParseData("http://localhost:8383/mms")
+func processMms(path string, countries *helper.Countries) [][]domain.MMSData {
+	dataMms := mms.ParseData(path)
 	sortCountryMmsData := dataMms
 	for i := range sortCountryMmsData {
 		sortCountryMmsData[i].Country = countries.MostGetCountryName(sortCountryMmsData[i].Country)
@@ -44,12 +106,16 @@ func GetResultData() domain.ResultSetT {
 	sort.SliceStable(sortProviderMmsData, func(i, j int) bool { return sortProviderMmsData[i].Provider < sortProviderMmsData[j].Provider })
 	resultMmsData := make([][]domain.MMSData, 0)
 	resultMmsData = append(resultMmsData, sortProviderMmsData, sortCountryMmsData)
-	resultData.MMS = resultMmsData
+	return resultMmsData
+}
 
-	dataVoiceCall := voicecall.ParseData("simulator/voice.data")
-	resultData.VoiceCall = dataVoiceCall
+func processVoiceCall(path string) []domain.VoiceCallData {
+	dataVoiceCall := voicecall.ParseData(path)
+	return dataVoiceCall
+}
 
-	dataEmail := email.ParseData("simulator/email.data")
+func processEmail(path string) map[string][][]domain.EmailData {
+	dataEmail := email.ParseData(path)
 	countryMap := make(map[string][]domain.EmailData, 0)
 	for _, value := range dataEmail {
 		countryMap[value.Country] = append(countryMap[value.Country], value)
@@ -66,12 +132,16 @@ func GetResultData() domain.ResultSetT {
 		resultMap[key] = [][]domain.EmailData{max[:num], min[:num]}
 		// допускаются ли дублирования значений в макс и мин?
 	}
-	resultData.Email = resultMap
+	return resultMap
+}
 
-	dataBilling := biling.ParseData("simulator/billing.data")
-	resultData.Billing = dataBilling
+func processBilling(path string) *domain.BillingData {
+	dataBilling := biling.ParseData(path)
+	return dataBilling
+}
 
-	dataSupport := support.ParseData("http://localhost:8383/support")
+func processSupport(path string) []int {
+	dataSupport := support.ParseData(path)
 	var preAverageTime = float32(60) / 18
 	var tickets, idxLoad, load int
 	supWorker := 7
@@ -87,11 +157,12 @@ func GetResultData() domain.ResultSetT {
 		idxLoad = 3
 	}
 	averageTime := float32(tickets) / preAverageTime
-	resultData.Support = []int{idxLoad, int(averageTime)}
+	resultDataSupport := []int{idxLoad, int(averageTime)}
+	return resultDataSupport
+}
 
-	dataIncident := incident.ParseData("http://localhost:8383/accendent")
+func processIncident(path string) []domain.IncidentData {
+	dataIncident := incident.ParseData(path)
 	sort.SliceStable(dataIncident, func(i, j int) bool { return dataIncident[i].Status < dataIncident[j].Status })
-	resultData.Incidents = dataIncident
-
-	return resultData
+	return dataIncident
 }

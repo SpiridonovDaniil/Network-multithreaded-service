@@ -1,8 +1,6 @@
 package email
 
 import (
-	"diploma/internal/domain"
-	"diploma/pkg/helper"
 	"encoding/csv"
 	"errors"
 	"io"
@@ -10,6 +8,9 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+
+	"diploma/internal/domain"
+	"diploma/pkg/helper"
 )
 
 func ParseData(path string) []domain.EmailData {

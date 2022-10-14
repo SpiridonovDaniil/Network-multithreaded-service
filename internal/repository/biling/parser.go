@@ -1,12 +1,12 @@
 package biling
 
 import (
-	"diploma/internal/domain"
-	"fmt"
 	"io"
 	"log"
 	"math"
 	"os"
+
+	"diploma/internal/domain"
 )
 
 const (
@@ -40,7 +40,6 @@ func ParseData(path string) *domain.BillingData {
 		RightByte++
 	}
 	n := uint8(num)
-	fmt.Println(n)
 	return &domain.BillingData{
 		CreateCustomer: n&(1<<maskCreateCustomer) > 0,
 		Purchase:       n&(1<<maskPurchase) > 0,
