@@ -19,6 +19,7 @@ func ParseData(path string) []domain.EmailData {
 	file, err := os.Open(path)
 	if err != nil {
 		log.Println(err)
+		return []domain.EmailData
 	}
 
 	r := csv.NewReader(file)

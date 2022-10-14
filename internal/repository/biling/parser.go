@@ -22,15 +22,15 @@ func ParseData(path string) *domain.BillingData {
 	r, err := os.Open(path)
 	if err != nil {
 		log.Println(err)
-
-		return nil
+		return &domain.BillingData{}
 	}
+
 	reader, err := io.ReadAll(r)
 	if err != nil {
 		log.Println(err)
-
-		return nil
+		return &domain.BillingData{}
 	}
+
 	var num float64
 	RightByte := 0
 	for i := 5; i >= 0; i-- {
@@ -40,6 +40,7 @@ func ParseData(path string) *domain.BillingData {
 		RightByte++
 	}
 	n := uint8(num)
+
 	return &domain.BillingData{
 		CreateCustomer: n&(1<<maskCreateCustomer) > 0,
 		Purchase:       n&(1<<maskPurchase) > 0,
