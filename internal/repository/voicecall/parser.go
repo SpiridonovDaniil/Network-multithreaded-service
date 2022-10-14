@@ -19,7 +19,7 @@ func ParseData(path string) []domain.VoiceCallData {
 	file, err := os.Open(path)
 	if err != nil {
 		log.Println(err)
-		return []domain.VoiceCallData
+		return []domain.VoiceCallData{}
 	}
 
 	r := csv.NewReader(file)

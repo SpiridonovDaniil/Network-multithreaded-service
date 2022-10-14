@@ -19,7 +19,7 @@ func ParseData(path string) []domain.SMSData {
 	file, err := os.Open(path)
 	if err != nil {
 		log.Println(err)
-		return []domain.SMSData
+		return []domain.SMSData{}
 	}
 
 	r := csv.NewReader(file)
