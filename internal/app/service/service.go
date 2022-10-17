@@ -87,9 +87,8 @@ func processSms(path string, countries *helper.Countries) [][]domain.SMSData {
 
 	sort.SliceStable(sortCountrySmsData, func(i, j int) bool { return sortCountrySmsData[i].Country < sortCountrySmsData[j].Country })
 	sort.SliceStable(sortProviderSmsData, func(i, j int) bool { return sortProviderSmsData[i].Provider < sortProviderSmsData[j].Provider })
-	resultSmsData := make([][]domain.SMSData, 0)
-	resultSmsData = append(resultSmsData, sortProviderSmsData, sortCountrySmsData)
-	return resultSmsData
+
+	return [][]domain.SMSData{sortProviderSmsData, sortCountrySmsData}
 }
 
 func processMms(path string, countries *helper.Countries) [][]domain.MMSData {
@@ -104,9 +103,8 @@ func processMms(path string, countries *helper.Countries) [][]domain.MMSData {
 
 	sort.SliceStable(sortCountryMmsData, func(i, j int) bool { return sortCountryMmsData[i].Country < sortCountryMmsData[j].Country })
 	sort.SliceStable(sortProviderMmsData, func(i, j int) bool { return sortProviderMmsData[i].Provider < sortProviderMmsData[j].Provider })
-	resultMmsData := make([][]domain.MMSData, 0)
-	resultMmsData = append(resultMmsData, sortProviderMmsData, sortCountryMmsData)
-	return resultMmsData
+
+	return [][]domain.MMSData{sortProviderMmsData, sortCountryMmsData}
 }
 
 func processVoiceCall(path string) []domain.VoiceCallData {
@@ -157,8 +155,8 @@ func processSupport(path string) []int {
 		idxLoad = 3
 	}
 	averageTime := float32(tickets) / preAverageTime
-	resultDataSupport := []int{idxLoad, int(averageTime)}
-	return resultDataSupport
+	
+	return []int{idxLoad, int(averageTime)}
 }
 
 func processIncident(path string) []domain.IncidentData {
