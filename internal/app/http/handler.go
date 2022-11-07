@@ -16,6 +16,10 @@ func HandleConnection(service service) func(w http.ResponseWriter, r *http.Reque
 		getResultData := service.GetResultData()
 		check := helper.CheckNilStruct(getResultData)
 		if check {
+
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
 			w.WriteHeader(http.StatusOK)
 			result.Status = true
 			result.Data = &getResultData

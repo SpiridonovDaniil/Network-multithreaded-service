@@ -55,7 +55,7 @@ func (s *Service) GetResultData() domain.ResultSetT {
 		wg.Done()
 	}()
 	go func() {
-		resultData.Email = processEmail(s.pathEmail)
+		resultData.Email = processEmail(s.pathEmail, countries)
 		wg.Done()
 	}()
 	go func() {
@@ -112,8 +112,13 @@ func processVoiceCall(path string) []domain.VoiceCallData {
 	return dataVoiceCall
 }
 
-func processEmail(path string) map[string][][]domain.EmailData {
+func processEmail(path string, countries *helper.Countries) map[string][][]domain.EmailData {
 	dataEmail := email.ParseData(path)
+
+	for i := range dataEmail {
+		dataEmail[i].Country = countries.MostGetCountryName(dataEmail[i].Country)
+	}
+
 	countryMap := make(map[string][]domain.EmailData, 0)
 	for _, value := range dataEmail {
 		countryMap[value.Country] = append(countryMap[value.Country], value)
@@ -128,7 +133,6 @@ func processEmail(path string) map[string][][]domain.EmailData {
 		sort.SliceStable(min, func(i, j int) bool { return min[i].DeliveryTime > min[j].DeliveryTime })
 		num := helper.GetLen(val)
 		resultMap[key] = [][]domain.EmailData{max[:num], min[:num]}
-		// допускаются ли дублирования значений в макс и мин?
 	}
 	return resultMap
 }
@@ -155,7 +159,7 @@ func processSupport(path string) []int {
 		idxLoad = 3
 	}
 	averageTime := float32(tickets) / preAverageTime
-	
+
 	return []int{idxLoad, int(averageTime)}
 }
 

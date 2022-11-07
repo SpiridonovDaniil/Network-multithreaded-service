@@ -2,6 +2,7 @@ package http
 
 import (
 	"context"
+	"diploma/internal/config"
 	"fmt"
 	"net/http"
 	"time"
@@ -25,9 +26,11 @@ func NewServer(service service, shutDownTime time.Duration) *Server {
 	r := mux.NewRouter()
 	r.HandleFunc("/api", HandleConnection(service))
 
+	cfg := config.Read()
+
 	s := Server{
 		service:      service,
-		server:       http.Server{Addr: ":8282", Handler: r},
+		server:       http.Server{Addr: ":" + cfg.Server.Port, Handler: r},
 		shutDownTime: shutDownTime,
 	}
 
